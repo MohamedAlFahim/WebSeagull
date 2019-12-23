@@ -106,3 +106,9 @@ dist
 # Python
 __pycache__/
 *.py[cod]
+
+# Experimentation folder
+Experimentation/
+
+# Visual Studio Code folder
+.vscode/
