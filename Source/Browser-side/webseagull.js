@@ -18,9 +18,9 @@ websocket.onmessage = function (event) {
         case 'add_event_listener_to_all':
             let target_elements = document.querySelectorAll(data.selector);
             target_elements.forEach(element => {
-                // If the element has an ID, the outerHTML can also be sent. Otherwise, send an empty string for the outer_html value.
-                const outer_html_value_code = (element.id === '') ? '""' : `document.getElementById('${element.id}').outerHTML`;
-                const message_dict_code = `{ 'type': 'event_was_triggered', 'name_of_python_function_to_call': '${data.python_function_name}', 'outer_html': ${outer_html_value_code} }`;
+                // If the element has an ID, the ID can also be sent. Otherwise, send an empty string for the id value.
+                const id_value_code = (element.id === '') ? '""' : `"${element.id}"`;
+                const message_dict_code = `{ 'type': 'event_was_triggered', 'name_of_python_function_to_call': '${data.python_function_name}', 'id': ${id_value_code} }`;
                 element.addEventListener(data.event_type, new Function('event', `
                 websocket.send(JSON.stringify( ${message_dict_code} ));
             `))
