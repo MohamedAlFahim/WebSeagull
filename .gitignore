@@ -112,3 +112,5 @@ Experimentation/
 
 # Visual Studio Code folder
 .vscode/
+
+.DS_Store
