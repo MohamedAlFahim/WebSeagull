@@ -41,12 +41,12 @@ class WebSeagullApplication:
         })
 
     async def order_browser_to_add_event_listener_to_all(
-        self,
-        *,
-        target_selector: str,
-        event_type: str,
-        python_function_name: str,
-        await_too: bool = False):
+            self,
+            *,
+            target_selector: str,
+            event_type: str,
+            python_function_name: str,
+            await_too: bool = False):
         await self.order_browser({
             'type': 'add_event_listener_to_all',
             'selector': target_selector,
@@ -91,8 +91,49 @@ class WebSeagullApplication:
             'selector': target_selector
         })
 
+    async def handle_setup(self):
+        pass
 
-def run_application(application):
-    start_server = websockets.serve(application, 'localhost', 6789)
+    async def handle_event_was_triggered(self, data: dict):
+        pass
+
+    async def handle_event_was_triggered_with_id(self, data: dict):
+        pass
+
+    async def handle_class_list(self, data: dict):
+        pass
+
+    async def handle_inner_html(self, data: dict):
+        pass
+
+    async def handle_other_event(self, data: dict):
+        pass
+
+    async def handler(self, websocket, path):
+        await self.register_connection(websocket)
+        try:
+            await self.handle_setup()
+            async for message in websocket:
+                # Handle commands from the browser side
+                data = json.loads(message)
+                if data['type'] == 'event_was_triggered':
+                    await self.handle_event_was_triggered(data)
+                elif data['type'] == 'event_was_triggered_with_id':
+                    await self.handle_event_was_triggered_with_id(data)
+                elif data['type'] == 'class_list':
+                    await self.handle_class_list(data)
+                elif data['type'] == 'inner_html':
+                    await self.handle_inner_html(data)
+                else:
+                    await self.handle_other_event(data)
+        finally:
+            await self.unregister_connection(websocket)
+
+
+def run_application(webseagull_application):
+    async def application_function(websocket, path):
+        await webseagull_application.handler(websocket, path)
+
+    start_server = websockets.serve(application_function, 'localhost', 6789)
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
